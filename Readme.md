@@ -19,6 +19,14 @@ This is a php/laravel wrapper package for [Bkash](https://developer.bka.sh/)
 composer require karim007/laravel-bkash-tokenize
 ```
 
+## Examples
+![]()<img src="example/bkash1.png" alt="bkash" width="150" height="150">
+![]()<img src="example/bkash2.png" alt="bkash" width="150" height="150">
+![]()<img src="example/bkash3.png" alt="bkash" width="150" height="150">
+![]()<img src="example/bkash4.png" alt="bkash" width="150" height="150">
+![]()<img src="example/bkash5.png" alt="bkash" width="150" height="150">
+
+
 ### vendor publish (config)
 
 ```bash
@@ -66,14 +74,8 @@ Route::group(['middleware' => ['web']], function () {
 });
 ```
 
-### 3. you can also override the methods
-
-#must be included in your controller
-```
-use Karim007\LaravelBkashTokenize\Facade\BkashPaymentTokenize;
-```
-
-### 4. payment page
+### 3. payment page
+you will find it App\Http\Controllers\BkashTokenizePaymentController
 ```
 public function index()
 {
@@ -104,6 +106,25 @@ public function createPayment(Request $request)
     }
 
 ```
+###create payment response
+```array
+array[
+  "statusCode" => "0000"
+  "statusMessage" => "Successful"
+  "paymentID" => "TR0011WQ1674418613025"
+  "bkashURL" => "https://sandbox.payment.bkash.com/redirect/tokenized/?paymentID=TR0011WQ1674418613025&hash=t1-54Dtkmi*wr1KeWV55Z8fl5_DqsaW2q.zQWAQrPtpMsg*5zhuy3w17ZbXEvQ)qU7IT_ ▶"
+  "callbackURL" => "base_url/bkash/callback"
+  "successCallbackURL" => "base_url/bkash/callback?paymentID=TR0011WQ1674418613025&status=success"
+  "failureCallbackURL" => "base_url/bkash/callback?paymentID=TR0011WQ1674418613025&status=failure"
+  "cancelledCallbackURL" => "base_url/bkash/callback?paymentID=TR0011WQ1674418613025&status=cancel"
+  "amount" => "100"
+  "intent" => "sale"
+  "currency" => "BDT"
+  "paymentCreateTime" => "2023-01-23T02:16:57:784 GMT+0600"
+  "transactionStatus" => "Initiated"
+  "merchantInvoiceNumber" => "63cd99abe6bae"
+]
+```
 
 ### 5. callback function
 
@@ -127,56 +148,41 @@ public function callBack(Request $request)
 
 
 ```
-### 5. execute payment
-```php
-    public function executePayment($paymentID)
-    {
-        return BkashPaymentTokenize::executePayment($paymentID);
-    }
-```
-
-### 6. query payment
-
-```
-public function queryPayment($paymentID)
-    {
-        /*{
-            "paymentID":"TR0011FN1674417661851",
-           "mode":"0011",
-           "paymentCreateTime":"2023-01-23T02:01:06:713 GMT+0600",
-           "paymentExecuteTime":"2023-01-23T02:04:05:736 GMT+0600",
-           "amount":"100",
-           "currency":"BDT",
-           "intent":"sale",
-           "merchantInvoice":"485605798",
-           "trxID":"AAN20A8HOI",
-           "transactionStatus":"Completed",
-           "verificationStatus":"Complete",
-           "statusCode":"0000",
-           "statusMessage":"Successful",
-           "payerReference":"485605798"
-        }*/
-        return BkashPaymentTokenize::queryPayment($paymentID);
-    }
-
-```
-
-### 7. success,cancel,failure
-
-```
-private function success($message,$transId)
+### 5. execute payment response
+```json
 {
-    return view('bkashT::success',compact('message','transId'));
+   "statusCode":"0000",
+   "statusMessage":"Successful",
+   "paymentID":"TR0011FN1674417661851",
+   "payerReference":"485605798",
+   "customerMsisdn":"01877722345",
+   "trxID":"AAN20A8HOI",
+   "amount":"100",
+   "transactionStatus":"Completed",
+   "paymentExecuteTime":"2023-01-23T02:04:05:736 GMT+0600",
+   "currency":"BDT",
+   "intent":"sale"
 }
+```
 
-private function cancel($message,$transId=null)
-{
-    return view('bkashT::failed',compact('message','transId'));
-}
+### 6. query payment response
 
-private function failure($message,$transId=null)
+```json
 {
-    return view('bkashT::failed',compact('message','transId'));
+    "paymentID":"TR0011FN1674417661851",
+   "mode":"0011",
+   "paymentCreateTime":"2023-01-23T02:01:06:713 GMT+0600",
+   "paymentExecuteTime":"2023-01-23T02:04:05:736 GMT+0600",
+   "amount":"100",
+   "currency":"BDT",
+   "intent":"sale",
+   "merchantInvoice":"485605798",
+   "trxID":"AAN20A8HOI",
+   "transactionStatus":"Completed",
+   "verificationStatus":"Complete",
+   "statusCode":"0000",
+   "statusMessage":"Successful",
+   "payerReference":"485605798"
 }
 
 ```

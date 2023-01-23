@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Facade;
  * @method static queryPayment($paymentID)
  * @method static bkashSuccess($pay_success)
  * @method static refreshToken()
+ * @method static success($message,$transId)
+ * @method static cancel($message,$transId=null)
+ * @method static failure($message,$transId=null)
  */
 class BkashPaymentTokenize extends Facade
 {
