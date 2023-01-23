@@ -38,6 +38,15 @@ class TBPayment extends TBBaseApi
     {
         return $this->getUrlToken("/checkout/token/refresh",$refresh_token);
     }
+    public function searchTransaction($trxID)
+    {
+        $post_token = array(
+            'trxID' => $trxID
+        );
+        $posttoken = json_encode($post_token);
+        $this->getToken();
+        return $this->getUrl3("/checkout/general/searchTransaction",$posttoken);
+    }
     public function success($message,$transId)
     {
         return view('bkashT::success',compact('message','transId'));

@@ -102,5 +102,23 @@ trait Helpers
         return json_decode($resultdata, true);
     }
 
+    protected function getUrl3($url,$data){
+        $url = curl_init($this->baseUrl.$url);
+        $app_key = config("bkash.bkash_app_key");
+        $header = array(
+            'Content-Type:application/json',
+            'Authorization:' . session()->get('bkash_token'),
+            'x-app-key:'.$app_key
+        );
+        curl_setopt($url, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($url, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($url, CURLOPT_RETURNTRANSFER, true);
+        if($data) curl_setopt($url, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($url, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($url, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+        $resultdata = curl_exec($url);
+        curl_close($url);
 
+        return json_decode($resultdata, true);
+    }
 }

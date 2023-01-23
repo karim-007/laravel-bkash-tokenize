@@ -60,4 +60,23 @@ class BkashTokenizePaymentController extends Controller
             return BkashPaymentTokenize::failure('Your transaction is failed');
         }
     }
+
+    public function searchTnx($trxID)
+    {
+        //response
+        /*{
+            "trxID":"AAN60A8IOQ",
+           "initiationTime":"2023-01-23T12:06:05:000 GMT+0600",
+           "completedTime":"2023-01-23T12:06:05:000 GMT+0600",
+           "transactionType":"bKash Tokenized Checkout via API",
+           "customerMsisdn":"01877722345",
+           "transactionStatus":"Completed",
+           "amount":"20",
+           "currency":"BDT",
+           "organizationShortCode":"50022",
+           "statusCode":"0000",
+           "statusMessage":"Successful"
+        }*/
+        return BkashPaymentTokenize::searchTransaction($trxID);
+    }
 }
