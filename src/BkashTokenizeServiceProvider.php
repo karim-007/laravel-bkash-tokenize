@@ -4,6 +4,7 @@ namespace Karim007\LaravelBkashTokenize;
 
 use Karim007\LaravelBkashTokenize\Payment\TBPayment;
 use Illuminate\Support\ServiceProvider;
+use Karim007\LaravelBkashTokenize\Payment\TBRefund;
 
 class BkashTokenizeServiceProvider extends ServiceProvider
 {
@@ -36,6 +37,9 @@ class BkashTokenizeServiceProvider extends ServiceProvider
 
         $this->app->bind("tbpayment", function () {
             return new TBPayment();
+        });
+        $this->app->bind("tbrefund", function () {
+            return new TBRefund();
         });
     }
 }

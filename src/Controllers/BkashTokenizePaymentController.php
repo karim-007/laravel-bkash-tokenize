@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Karim007\LaravelBkashTokenize\Facade\BkashPaymentTokenize;
+use Karim007\LaravelBkashTokenize\Facade\BkashRefundTokenize;
 
 class BkashTokenizePaymentController extends Controller
 {
@@ -47,12 +48,20 @@ class BkashTokenizePaymentController extends Controller
     public function callBack(Request $request)
     {
         //paymentID=TR00117B1674409647770&status=success&apiVersion=1.2.0-beta
+
         if ($request->status == 'success'){
             $response = BkashPaymentTokenize::executePayment($request->paymentID);
             if (!$response){ //if executePayment payment not found call queryPayment
                 $response = BkashPaymentTokenize::queryPayment($request->paymentID);
             }
-            if (isset($response['statusCode']) && $response['statusCode'] == "0000") return BkashPaymentTokenize::success('Thank you for your payment',$response['trxID']);
+
+            if (isset($response['statusCode']) && $response['statusCode'] == "0000" && $response['transactionStatus'] == "Completed") {
+                /*
+                 * for refund need to store
+                 * paymentID and trxID
+                 * */
+                return BkashPaymentTokenize::success('Thank you for your payment', $response['trxID']);
+            }
             return BkashPaymentTokenize::failure($response['statusMessage']);
         }else if ($request->status == 'cancel'){
             return BkashPaymentTokenize::cancel('Your payment is canceled');
@@ -78,5 +87,44 @@ class BkashTokenizePaymentController extends Controller
            "statusMessage":"Successful"
         }*/
         return BkashPaymentTokenize::searchTransaction($trxID);
+    }
+
+    public function refund(Request $request)
+    {
+        $paymentID='TR0011WI1674466909042';//TR0011WI1674466909042
+        $trxID='AAN30A8M4T'; //AAN30A8M4T
+        $amount=5;
+        $reason='this is test reason';
+        $sku='abc';
+        //response
+        /*{
+            "statusCode":"0000",
+           "statusMessage":"Successful",
+           "originalTrxID":"AAN30A8M4T",
+           "refundTrxID":"AAN30A8M5N",
+           "transactionStatus":"Completed",
+           "amount":"5",
+           "currency":"BDT",
+           "charge":"0.00",
+           "completedTime":"2023-01-23T15:53:29:120 GMT+0600"
+        }*/
+        return BkashRefundTokenize::refund($paymentID,$trxID,$amount,$reason,$sku);
+    }
+    public function refundStatus(Request $request)
+    {
+        $paymentID='TR0011WI1674466909042';
+        $trxID='AAN30A8M4T';
+        /*{
+            "statusCode":"0000",
+           "statusMessage":"Successful",
+           "originalTrxID":"AAN30A8M4T",
+           "refundTrxID":"AAN30A8M5N",
+           "transactionStatus":"Completed",
+           "amount":"5",
+           "currency":"BDT",
+           "charge":"0.00",
+           "completedTime":"2023-01-23T15:53:29:120 GMT+0600"
+        }*/
+        return BkashRefundTokenize::refundStatus($paymentID,$trxID);
     }
 }

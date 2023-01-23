@@ -86,7 +86,7 @@ public function index()
 
 ### 4. create payment
 
-```
+```php
 public function createPayment(Request $request)
     {
         $inv = uniqid();
@@ -128,25 +128,23 @@ array[
 
 ### 5. callback function
 
-```
+```php
 public function callBack(Request $request)
     {
         //paymentID=TR00117B1674409647770&status=success&apiVersion=1.2.0-beta
         if ($request->status == 'success'){
-            $response = $this->executePayment($request->paymentID);
+            $response = BkashPaymentTokenize::executePayment($request->paymentID);
             if (!$response){
-                $response =  $this->queryPayment($request->paymentID);
+                $response =  BkashPaymentTokenize::queryPayment($request->paymentID);
             }
             if (isset($response['statusCode']) && $response['statusCode'] == "0000") return $this->success('Thank you for your payment',$response['trxID']);
-            return $this->failure($response['statusMessage']);
+            return BkashPaymentTokenize::failure($response['statusMessage']);
         }else if ($request->status == 'cancel'){
-            return $this->cancel('Your payment is canceled');
+            return BkashPaymentTokenize::cancel('Your payment is canceled');
         }else{
-            return $this->failure('Your transaction is failed');
+            return BkashPaymentTokenize::failure('Your transaction is failed');
         }
     }
-
-
 ```
 ### 5. execute payment response
 ```json
@@ -186,7 +184,75 @@ public function callBack(Request $request)
 }
 
 ```
+### 7. search transaction
 
+```php
+public function searchTnx($trxID)
+{
+    //response
+    /*{
+        "trxID":"AAN60A8IOQ",
+       "initiationTime":"2023-01-23T12:06:05:000 GMT+0600",
+       "completedTime":"2023-01-23T12:06:05:000 GMT+0600",
+       "transactionType":"bKash Tokenized Checkout via API",
+       "customerMsisdn":"01877722345",
+       "transactionStatus":"Completed",
+       "amount":"20",
+       "currency":"BDT",
+       "organizationShortCode":"50022",
+       "statusCode":"0000",
+       "statusMessage":"Successful"
+    }*/
+    return BkashPaymentTokenize::searchTransaction($trxID);
+}
+```
+
+### 8. refund transaction
+
+```php
+public function refund(Request $request)
+    {
+        $paymentID='paymentID';
+        $trxID='trxID';
+        $amount=5;
+        $reason='this is test reason';
+        $sku='abc';
+        //response
+        /*{
+            "statusCode":"0000",
+           "statusMessage":"Successful",
+           "originalTrxID":"AAN30A8M4T",
+           "refundTrxID":"AAN30A8M5N",
+           "transactionStatus":"Completed",
+           "amount":"5",
+           "currency":"BDT",
+           "charge":"0.00",
+           "completedTime":"2023-01-23T15:53:29:120 GMT+0600"
+        }*/
+        return BkashRefundTokenize::refund($paymentID,$trxID,$amount,$reason,$sku);
+    }
+```
+### 9. refund status check
+
+```php
+public function refundStatus(Request $request)
+    {
+        $paymentID='paymentID';
+        $trxID='trxID';
+        /*{
+            "statusCode":"0000",
+           "statusMessage":"Successful",
+           "originalTrxID":"AAN30A8M4T",
+           "refundTrxID":"AAN30A8M5N",
+           "transactionStatus":"Completed",
+           "amount":"5",
+           "currency":"BDT",
+           "charge":"0.00",
+           "completedTime":"2023-01-23T15:53:29:120 GMT+0600"
+        }*/
+        return BkashRefundTokenize::refundStatus($paymentID,$trxID);
+    }
+```
 #### Required APIs
 0. **Developer Portal** (detail Product, workflow, API information): https://developer.bka.sh/docs/checkout-process-overview
 1. **Grant Token :** https://developer.bka.sh/v1.2.0-beta/reference#gettokenusingpost

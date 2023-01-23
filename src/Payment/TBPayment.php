@@ -8,11 +8,6 @@ class TBPayment extends TBBaseApi
 {
     use Helpers;
 
-    private function getToken()
-    {
-        return $this->getUrlToken('/checkout/token/grant');
-    }
-
     public function cPayment($request_data_json)
     {
         $response = $this->getToken();

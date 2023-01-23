@@ -13,7 +13,7 @@ trait Helpers
         return request()->ip();
     }
 
-    public function getUrlToken($url,$refresh_token=null)
+    protected function getUrlToken($url,$refresh_token=null)
     {
         session()->forget('bkash_token');
         session()->forget('bkash_token_type');
@@ -55,7 +55,7 @@ trait Helpers
         return $response;
     }
 
-    public function getUrl($url, $method, $data=null)
+    protected function getUrl($url, $method, $data=null)
     {
         $token = session()->get('bkash_token');
         $app_key = config("bkash.bkash_app_key");
@@ -120,5 +120,10 @@ trait Helpers
         curl_close($url);
 
         return json_decode($resultdata, true);
+    }
+
+    protected function getToken()
+    {
+        return $this->getUrlToken('/checkout/token/grant');
     }
 }

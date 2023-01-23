@@ -5,8 +5,8 @@ namespace Karim007\LaravelBkashTokenize\Facade;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static index()
- * @method static refund($post_fields)
+ * @method static refund($paymentID,$trxID,$amount,$reason=null,$sku=null)
+ * @method static refundStatus($paymentID,$trxID)
  */
 class BkashRefundTokenize extends Facade
 {
@@ -17,6 +17,6 @@ class BkashRefundTokenize extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'tbrefundPayment';
+        return 'tbrefund';
     }
 }
