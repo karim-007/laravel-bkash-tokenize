@@ -1,7 +1,7 @@
 # Bkash Payment Gateway for PHP/Laravel Framework
 
-[![Downloads](https://img.shields.io/packagist/dt/karim007/laravel-bkash)](https://packagist.org/packages/karim007/laravel-bkash)
-[![Starts](https://img.shields.io/packagist/stars/karim007/laravel-bkash)](https://packagist.org/packages/karim007/laravel-bkash)
+[![Downloads](https://img.shields.io/packagist/dt/karim007/laravel-bkash-tokenize)](https://packagist.org/packages/karim007/laravel-bkash-tokenize)
+[![Starts](https://img.shields.io/packagist/stars/karim007/laravel-bkash-tokenize)](https://packagist.org/packages/karim007/laravel-bkash-tokenize)
 
 ## Features
 
