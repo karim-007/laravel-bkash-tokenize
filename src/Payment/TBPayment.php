@@ -8,39 +8,52 @@ class TBPayment extends TBBaseApi
 {
     use Helpers;
 
-    public function cPayment($request_data_json)
+    public function cPayment($request_data_json, $account=1)
     {
-        $response = $this->getToken();
+        if ($account == 1) $account=null;
+        else $account="_$account";
+        $response = $this->getToken($account);
         if ($response['id_token']){
-            return $this->getUrl('/checkout/create','POST',$request_data_json);
+            return $this->getUrl('/checkout/create','POST',$request_data_json, $account);
         }
         return redirect()->back()->with('error-alert2', 'Invalid request try again');
+    }
+    public function executePayment($paymentID, $account=1)
+    {
+        if ($account == 1) $account=null;
+        else $account="_$account";
 
-    }
-    public function executePayment($paymentID)
-    {
         $token = session()->get('bkash_token');
-        if (!$token) $this->getToken();
-        return $this->getUrl2($paymentID,'/checkout/execute');
+        if (!$token) $this->getToken($account);
+        return $this->getUrl2($paymentID,'/checkout/execute', $account);
     }
-    public function queryPayment($paymentID)
+    public function queryPayment($paymentID, $account=1)
     {
+        if ($account == 1) $account=null;
+        else $account="_$account";
+
         $token = session()->get('bkash_token');
-        if (!$token) $this->getToken();
-        return $this->getUrl2($paymentID,'/checkout/payment/status');
+        if (!$token) $this->getToken($account);
+        return $this->getUrl2($paymentID,'/checkout/payment/status', $account);
     }
-    public function refreshToken($refresh_token)
+    public function refreshToken($refresh_token, $account=1)
     {
-        return $this->getUrlToken("/checkout/token/refresh",$refresh_token);
+        if ($account == 1) $account=null;
+        else $account="_$account";
+
+        return $this->getUrlToken("/checkout/token/refresh",$refresh_token, $account);
     }
-    public function searchTransaction($trxID)
+    public function searchTransaction($trxID, $account=1)
     {
+        if ($account == 1) $account=null;
+        else $account="_$account";
+
         $post_token = array(
             'trxID' => $trxID
         );
         $posttoken = json_encode($post_token);
-        $this->getToken();
-        return $this->getUrl3("/checkout/general/searchTransaction",$posttoken);
+        $this->getToken($account);
+        return $this->getUrl3("/checkout/general/searchTransaction",$posttoken, $account);
     }
     public function success($message,$transId)
     {

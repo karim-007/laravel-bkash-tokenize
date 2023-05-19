@@ -38,10 +38,12 @@ After publish config file setup your credential. you can see this in your config
 
 ```
 "sandbox"         => env("BKASH_SANDBOX", true),
+
 "bkash_app_key"     => env("BKASH_APP_KEY", ""),
 "bkash_app_secret" => env("BKASH_APP_SECRET", ""),
 "bkash_username"      => env("BKASH_USERNAME", ""),
 "bkash_password"     => env("BKASH_PASSWORD", ""),
+
 "callbackURL"     => env("BKASH_CALLBACK_URL", "http://127.0.0.1:8000/bkash/callback"),
 'timezone'        => 'Asia/Dhaka', 
 ```
@@ -50,10 +52,12 @@ After publish config file setup your credential. you can see this in your config
 
 ```
 BKASH_SANDBOX=true  #for production use false
+
 BKASH_APP_KEY=""
 BKASH_APP_SECRET=""
 BKASH_USERNAME=""
 BKASH_PASSWORD=""
+
 BKASH_CALLBACK_URL=""
 ```
 
@@ -64,7 +68,7 @@ php artisan vendor:publish --provider="Karim007\LaravelBkashTokenize\BkashTokeni
 
 ```
 
-### 2. you can override the routes (routes must be in authenticate bkash prefer it)
+### 2. you can override the routes
 ```php
 Route::group(['middleware' => ['web']], function () {
     // Payment Routes for bKash
@@ -109,6 +113,12 @@ public function createPayment(Request $request)
         $request_data_json = json_encode($request->all());
 
         $response =  BkashPaymentTokenize::cPayment($request_data_json);
+        //$response =  BkashPaymentTokenize::cPayment($request_data_json,1); //last parameter is your account number for multi account its like, 1,2,3,4,cont.. default param is 1
+
+        //store paymentID and your account number for matching in callback request
+        // dd($response) //if you are using sandbox and not submit info to bkash use it for 1 response
+
+
         if (isset($response['bkashURL'])) return redirect()->away($response['bkashURL']);
         else return redirect()->back()->with('error-alert2', $response['statusMessage']);
     }
@@ -139,13 +149,26 @@ array[
 ```php
 public function callBack(Request $request)
     {
-        //paymentID=TR00117B1674409647770&status=success&apiVersion=1.2.0-beta
+        //callback request params
+        // paymentID=TR00117B1674409647770&status=success&apiVersion=1.2.0-beta
+        //using paymentID find the account number for sending params
+
         if ($request->status == 'success'){
             $response = BkashPaymentTokenize::executePayment($request->paymentID);
+            //$response = BkashPaymentTokenize::executePayment($request->paymentID, 1); //last parameter is your account number for multi account its like, 1,2,3,4,cont..
+
             if (!$response){
                 $response =  BkashPaymentTokenize::queryPayment($request->paymentID);
+                //$response = BkashPaymentTokenize::queryPayment($request->paymentID,1); //last parameter is your account number for multi account its like, 1,2,3,4,cont..
+
             }
-            if (isset($response['statusCode']) && $response['statusCode'] == "0000") return $this->success('Thank you for your payment',$response['trxID']);
+            if (isset($response['statusCode']) && $response['statusCode'] == "0000" && $response['transactionStatus'] == "Completed") {
+                /*
+                 * for refund need to store
+                 * paymentID and trxID
+                 * */
+                return BkashPaymentTokenize::success('Thank you for your payment', $response['trxID']);
+            }
             return BkashPaymentTokenize::failure($response['statusMessage']);
         }else if ($request->status == 'cancel'){
             return BkashPaymentTokenize::cancel('Your payment is canceled');
@@ -212,6 +235,8 @@ public function searchTnx($trxID)
        "statusMessage":"Successful"
     }*/
     return BkashPaymentTokenize::searchTransaction($trxID);
+    //return BkashPaymentTokenize::searchTransaction($trxID,1); //last parameter is your account number for multi account its like, 1,2,3,4,cont..
+
 }
 ```
 
@@ -238,6 +263,8 @@ public function refund(Request $request)
            "completedTime":"2023-01-23T15:53:29:120 GMT+0600"
         }*/
         return BkashRefundTokenize::refund($paymentID,$trxID,$amount,$reason,$sku);
+        //return BkashRefundTokenize::refund($paymentID,$trxID,$amount,$reason,$sku, 1); //last parameter is your account number for multi account its like, 1,2,3,4,cont..
+
     }
 ```
 ### 9. refund status check
@@ -259,8 +286,12 @@ public function refundStatus(Request $request)
            "completedTime":"2023-01-23T15:53:29:120 GMT+0600"
         }*/
         return BkashRefundTokenize::refundStatus($paymentID,$trxID);
+        //return BkashRefundTokenize::refundStatus($paymentID,$trxID, 1); //last parameter is your account number for multi account its like, 1,2,3,4,cont..
+
     }
 ```
+N.B. If you are using single account dont need to think about account parameter ignore it just simply use as usal
+
 #### Required APIs
 0. **Developer Portal** (detail Product, workflow, API information): https://developer.bka.sh/docs/checkout-process-overview
 1. **Grant Token :** https://developer.bka.sh/v1.2.0-beta/reference#gettokenusingpost

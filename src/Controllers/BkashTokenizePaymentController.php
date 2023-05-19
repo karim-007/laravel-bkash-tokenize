@@ -25,6 +25,7 @@ class BkashTokenizePaymentController extends Controller
         $request_data_json = json_encode($request->all());
 
         $response =  BkashPaymentTokenize::cPayment($request_data_json);
+        //$response =  BkashPaymentTokenize::cPayment($request_data_json,1); //last parameter is your account number for multi account its like, 1,2,3,4,cont..
         /*array[
           "statusCode" => "0000"
           "statusMessage" => "Successful"
@@ -41,18 +42,26 @@ class BkashTokenizePaymentController extends Controller
           "transactionStatus" => "Initiated"
           "merchantInvoiceNumber" => "63cd99abe6bae"
         ]*/
+
+        //store paymentID and your account number for matching in callback request
+        // dd($response) //if you are using sandbox and not submit info to bkash use it for 1 response
+
         if (isset($response['bkashURL'])) return redirect()->away($response['bkashURL']);
         else return redirect()->back()->with('error-alert2', $response['statusMessage']);
     }
 
     public function callBack(Request $request)
     {
-        //paymentID=TR00117B1674409647770&status=success&apiVersion=1.2.0-beta
+        //callback request params
+        // paymentID=TR00117B1674409647770&status=success&apiVersion=1.2.0-beta
+        //using paymentID find the account number for sending params
 
         if ($request->status == 'success'){
             $response = BkashPaymentTokenize::executePayment($request->paymentID);
+            //$response = BkashPaymentTokenize::executePayment($request->paymentID, 1); //last parameter is your account number for multi account its like, 1,2,3,4,cont..
             if (!$response){ //if executePayment payment not found call queryPayment
                 $response = BkashPaymentTokenize::queryPayment($request->paymentID);
+                //$response = BkashPaymentTokenize::queryPayment($request->paymentID,1); //last parameter is your account number for multi account its like, 1,2,3,4,cont..
             }
 
             if (isset($response['statusCode']) && $response['statusCode'] == "0000" && $response['transactionStatus'] == "Completed") {
@@ -87,6 +96,7 @@ class BkashTokenizePaymentController extends Controller
            "statusMessage":"Successful"
         }*/
         return BkashPaymentTokenize::searchTransaction($trxID);
+        //return BkashPaymentTokenize::searchTransaction($trxID,1); //last parameter is your account number for multi account its like, 1,2,3,4,cont..
     }
 
     public function refund(Request $request)
@@ -109,6 +119,7 @@ class BkashTokenizePaymentController extends Controller
            "completedTime":"2023-01-23T15:53:29:120 GMT+0600"
         }*/
         return BkashRefundTokenize::refund($paymentID,$trxID,$amount,$reason,$sku);
+        //return BkashRefundTokenize::refund($paymentID,$trxID,$amount,$reason,$sku, 1); //last parameter is your account number for multi account its like, 1,2,3,4,cont..
     }
     public function refundStatus(Request $request)
     {
@@ -126,5 +137,6 @@ class BkashTokenizePaymentController extends Controller
            "completedTime":"2023-01-23T15:53:29:120 GMT+0600"
         }*/
         return BkashRefundTokenize::refundStatus($paymentID,$trxID);
+        //return BkashRefundTokenize::refundStatus($paymentID,$trxID, 1); //last parameter is your account number for multi account its like, 1,2,3,4,cont..
     }
 }

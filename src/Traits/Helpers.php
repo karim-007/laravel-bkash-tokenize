@@ -13,21 +13,21 @@ trait Helpers
         return request()->ip();
     }
 
-    protected function getUrlToken($url,$refresh_token=null)
+    protected function getUrlToken($url,$refresh_token=null, $account=null)
     {
         session()->forget('bkash_token');
         session()->forget('bkash_token_type');
         session()->forget('bkash_refresh_token');
         $post_token = array(
-            'app_key' => config("bkash.bkash_app_key"),
-            'app_secret' => config("bkash.bkash_app_secret"),
+            'app_key' => config("bkash.bkash_app_key$account"),
+            'app_secret' => config("bkash.bkash_app_secret$account"),
             'refresh_token' => $refresh_token,
         );
         $url = curl_init($this->baseUrl.$url);
         $post_token = json_encode($post_token);
 
-        $username = config("bkash.bkash_username");
-        $password = config("bkash.bkash_password");
+        $username = config("bkash.bkash_username$account");
+        $password = config("bkash.bkash_password$account");
 
         $header = array(
             'Content-Type:application/json',
@@ -55,10 +55,10 @@ trait Helpers
         return $response;
     }
 
-    protected function getUrl($url, $method, $data=null)
+    protected function getUrl($url, $method, $data=null, $account=null)
     {
         $token = session()->get('bkash_token');
-        $app_key = config("bkash.bkash_app_key");
+        $app_key = config("bkash.bkash_app_key$account");
 
         $url = curl_init($this->baseUrl.$url);
         $header = array(
@@ -78,13 +78,13 @@ trait Helpers
         return json_decode($resultdata, true);
     }
 
-    protected function getUrl2($paymentID,$url){
+    protected function getUrl2($paymentID, $url, $account=null){
         $post_token = array(
             'paymentID' => $paymentID
         );
         $url = curl_init($this->baseUrl.$url);
         $posttoken = json_encode($post_token);
-        $app_key = config("bkash.bkash_app_key");
+        $app_key = config("bkash.bkash_app_key$account");
         $header = array(
             'Content-Type:application/json',
             'Authorization:' . session()->get('bkash_token'),
@@ -102,9 +102,9 @@ trait Helpers
         return json_decode($resultdata, true);
     }
 
-    protected function getUrl3($url,$data){
+    protected function getUrl3($url,$data, $account=null){
         $url = curl_init($this->baseUrl.$url);
-        $app_key = config("bkash.bkash_app_key");
+        $app_key = config("bkash.bkash_app_key$account");
         $header = array(
             'Content-Type:application/json',
             'Authorization:' . session()->get('bkash_token'),
@@ -122,8 +122,8 @@ trait Helpers
         return json_decode($resultdata, true);
     }
 
-    protected function getToken()
+    protected function getToken($account=null)
     {
-        return $this->getUrlToken('/checkout/token/grant');
+        return $this->getUrlToken('/checkout/token/grant',null, $account);
     }
 }
