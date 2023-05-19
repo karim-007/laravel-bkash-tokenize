@@ -44,6 +44,13 @@ After publish config file setup your credential. you can see this in your config
 "bkash_username"      => env("BKASH_USERNAME", ""),
 "bkash_password"     => env("BKASH_PASSWORD", ""),
 
+"bkash_app_key_2"     => env("BKASH_APP_KEY_2", ""),
+"bkash_app_secret_2" => env("BKASH_APP_SECRET_2", ""),
+"bkash_username_2"      => env("BKASH_USERNAME_2", ""),
+"bkash_password_2"     => env("BKASH_PASSWORD_2", ""),
+
+//so on ...
+
 "callbackURL"     => env("BKASH_CALLBACK_URL", "http://127.0.0.1:8000/bkash/callback"),
 'timezone'        => 'Asia/Dhaka', 
 ```
@@ -57,6 +64,14 @@ BKASH_APP_KEY=""
 BKASH_APP_SECRET=""
 BKASH_USERNAME=""
 BKASH_PASSWORD=""
+
+#for multi account
+BKASH_APP_KEY_2=""
+BKASH_APP_SECRET_2=""
+BKASH_USERNAME_2=""
+BKASH_PASSWORD_2=""
+
+#so on just use _number likes _3, _4, _5
 
 BKASH_CALLBACK_URL=""
 ```
