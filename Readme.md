@@ -20,9 +20,6 @@ composer require karim007/laravel-bkash-tokenize
 ```
 
 ## Examples
-![]()<img src="example/bkash1.png" alt="bkash" width="150" height="150">
-![]()<img src="example/bkash2.png" alt="bkash" width="150" height="150">
-![]()<img src="example/bkash3.png" alt="bkash" width="150" height="150">
 ![]()<img src="example/bkash4.png" alt="bkash" width="150" height="150">
 ![]()<img src="example/bkash5.png" alt="bkash" width="150" height="150">
 
@@ -144,18 +141,18 @@ public function createPayment(Request $request)
 array[
   "statusCode" => "0000"
   "statusMessage" => "Successful"
-  "paymentID" => "TR0011WQ1674418613025"
-  "bkashURL" => "https://sandbox.payment.bkash.com/redirect/tokenized/?paymentID=TR0011WQ1674418613025&hash=t1-54Dtkmi*wr1KeWV55Z8fl5_DqsaW2q.zQWAQrPtpMsg*5zhuy3w17ZbXEvQ)qU7IT_ ▶"
+  "paymentID" => "Your payment id"
+  "bkashURL" => "https://sandbox.payment.bkash.com/redirect/tokenized/?paymentID=your_payment_id&hash=your_hash"
   "callbackURL" => "base_url/bkash/callback"
-  "successCallbackURL" => "base_url/bkash/callback?paymentID=TR0011WQ1674418613025&status=success"
-  "failureCallbackURL" => "base_url/bkash/callback?paymentID=TR0011WQ1674418613025&status=failure"
-  "cancelledCallbackURL" => "base_url/bkash/callback?paymentID=TR0011WQ1674418613025&status=cancel"
+  "successCallbackURL" => "base_url/bkash/callback?paymentID=your_payment_id&status=success"
+  "failureCallbackURL" => "base_url/bkash/callback?paymentID=your_payment_id&status=failure"
+  "cancelledCallbackURL" => "base_url/bkash/callback?paymentID=your_payment_id&status=cancel"
   "amount" => "100"
   "intent" => "sale"
   "currency" => "BDT"
   "paymentCreateTime" => "2023-01-23T02:16:57:784 GMT+0600"
   "transactionStatus" => "Initiated"
-  "merchantInvoiceNumber" => "63cd99abe6bae"
+  "merchantInvoiceNumber" => "merchant_invoice_no"
 ]
 ```
 
@@ -165,7 +162,7 @@ array[
 public function callBack(Request $request)
     {
         //callback request params
-        // paymentID=TR00117B1674409647770&status=success&apiVersion=1.2.0-beta
+        // paymentID=your_payment_id&status=success&apiVersion=1.2.0-beta
         //using paymentID find the account number for sending params
 
         if ($request->status == 'success'){
@@ -197,10 +194,10 @@ public function callBack(Request $request)
 {
    "statusCode":"0000",
    "statusMessage":"Successful",
-   "paymentID":"TR0011FN1674417661851",
-   "payerReference":"485605798",
-   "customerMsisdn":"01877722345",
-   "trxID":"AAN20A8HOI",
+   "paymentID":"your_payment_id",
+   "payerReference":"your_ref_id",
+   "customerMsisdn":"customer_msi",
+   "trxID":"your_tnx_id",
    "amount":"100",
    "transactionStatus":"Completed",
    "paymentExecuteTime":"2023-01-23T02:04:05:736 GMT+0600",
@@ -213,20 +210,20 @@ public function callBack(Request $request)
 
 ```json
 {
-    "paymentID":"TR0011FN1674417661851",
+    "paymentID":"your_payment_id",
    "mode":"0011",
    "paymentCreateTime":"2023-01-23T02:01:06:713 GMT+0600",
    "paymentExecuteTime":"2023-01-23T02:04:05:736 GMT+0600",
    "amount":"100",
    "currency":"BDT",
    "intent":"sale",
-   "merchantInvoice":"485605798",
-   "trxID":"AAN20A8HOI",
+   "merchantInvoice":"merchant_inv_no",
+   "trxID":"tnx_no",
    "transactionStatus":"Completed",
    "verificationStatus":"Complete",
    "statusCode":"0000",
    "statusMessage":"Successful",
-   "payerReference":"485605798"
+   "payerReference":"pay_ref"
 }
 
 ```
@@ -237,15 +234,15 @@ public function searchTnx($trxID)
 {
     //response
     /*{
-        "trxID":"AAN60A8IOQ",
+        "trxID":"tnx_no",
        "initiationTime":"2023-01-23T12:06:05:000 GMT+0600",
        "completedTime":"2023-01-23T12:06:05:000 GMT+0600",
        "transactionType":"bKash Tokenized Checkout via API",
-       "customerMsisdn":"01877722345",
+       "customerMsisdn":"customer_msi",
        "transactionStatus":"Completed",
        "amount":"20",
        "currency":"BDT",
-       "organizationShortCode":"50022",
+       "organizationShortCode":"og_short_code",
        "statusCode":"0000",
        "statusMessage":"Successful"
     }*/
@@ -269,8 +266,8 @@ public function refund(Request $request)
         /*{
             "statusCode":"0000",
            "statusMessage":"Successful",
-           "originalTrxID":"AAN30A8M4T",
-           "refundTrxID":"AAN30A8M5N",
+           "originalTrxID":"or_tnx_no",
+           "refundTrxID":"refund_tnx",
            "transactionStatus":"Completed",
            "amount":"5",
            "currency":"BDT",
@@ -292,8 +289,8 @@ public function refundStatus(Request $request)
         /*{
             "statusCode":"0000",
            "statusMessage":"Successful",
-           "originalTrxID":"AAN30A8M4T",
-           "refundTrxID":"AAN30A8M5N",
+           "originalTrxID":"ori_tx",
+           "refundTrxID":"ref_tx",
            "transactionStatus":"Completed",
            "amount":"5",
            "currency":"BDT",
