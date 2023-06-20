@@ -37,7 +37,7 @@ class BkashTokenizePaymentController extends Controller
     public function callBack(Request $request)
     {
         //callback request params
-        // paymentID=TR00117B1674409647770&status=success&apiVersion=1.2.0-beta
+        // paymentID=your_payment_id&status=success&apiVersion=1.2.0-beta
         //using paymentID find the account number for sending params
 
         if ($request->status == 'success'){

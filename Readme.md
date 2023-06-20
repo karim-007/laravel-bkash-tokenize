@@ -24,6 +24,12 @@ composer require karim007/laravel-bkash-tokenize
 ![]()<img src="example/bkash5.png" alt="bkash" width="150" height="150">
 
 
+For  video tutorial click the image bellow or https://youtu.be/xue4EP5et58
+
+[![laravel bkash tokenize](https://img.youtube.com/vi/pAbr1X0Jz6s/hqdefault.jpg)](https://youtu.be/pAbr1X0Jz6s)
+
+
+
 ### vendor publish (config)
 
 ```bash

@@ -13,10 +13,11 @@ class TBPayment extends TBBaseApi
         if ($account == 1) $account=null;
         else $account="_$account";
         $response = $this->getToken($account);
-        if ($response['id_token']){
+
+        if (isset($response['id_token']) && $response['id_token']){
             return $this->getUrl('/checkout/create','POST',$request_data_json, $account);
         }
-        return redirect()->back()->with('error-alert2', 'Invalid request try again');
+        return $response;
     }
     public function executePayment($paymentID, $account=1)
     {

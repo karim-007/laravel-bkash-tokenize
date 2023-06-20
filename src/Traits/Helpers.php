@@ -48,10 +48,11 @@ trait Helpers
         if (array_key_exists('msg', $response)) {
             return $response;
         }
-        session()->put('bkash_token', $response['id_token']);
-        session()->put('bkash_token_type', $response['token_type']);
-        session()->put('bkash_refresh_token', $response['refresh_token']);
-
+        if (isset($response['id_token']) && isset($response['token_type']) && isset($response['refresh_token'])){
+            session()->put('bkash_token', $response['id_token']);
+            session()->put('bkash_token_type', $response['token_type']);
+            session()->put('bkash_refresh_token', $response['refresh_token']);
+        }
         return $response;
     }
 
