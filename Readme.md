@@ -20,6 +20,9 @@ composer require karim007/laravel-bkash-tokenize
 ```
 
 ## Examples
+![]()<img src="example/bkash1.png" alt="bkash tokenize" width="150" height="150">
+![]()<img src="example/bkash2.png" alt="bkash tokenize payment" width="150" height="150">
+![]()<img src="example/bkash3.png" alt="bkash" width="150" height="150">
 ![]()<img src="example/bkash4.png" alt="bkash" width="150" height="150">
 ![]()<img src="example/bkash5.png" alt="bkash" width="150" height="150">
 
