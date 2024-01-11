@@ -323,7 +323,7 @@ N.B. If you are using single account dont need to think about account parameter 
 
 ### Checkout Demo
 1. Go to https://merchantdemo.sandbox.bka.sh/frontend/checkout/version/1.2.0-beta
-2. **Wallet Number:** 01877722345
+2. **Wallet Number:** 01770618575
 3. **OTP:** 123456
 4. **Pin:** 12121
 
