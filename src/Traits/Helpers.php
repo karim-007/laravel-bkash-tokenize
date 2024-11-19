@@ -2,6 +2,8 @@
 
 namespace Karim007\LaravelBkashTokenize\Traits;
 
+use Illuminate\Support\Facades\Cache;
+
 
 trait Helpers
 {
@@ -18,33 +20,42 @@ trait Helpers
         session()->forget('bkash_token');
         session()->forget('bkash_token_type');
         session()->forget('bkash_refresh_token');
-        $post_token = array(
-            'app_key' => config("bkash.bkash_app_key$account"),
-            'app_secret' => config("bkash.bkash_app_secret$account"),
-            'refresh_token' => $refresh_token,
-        );
-        $url = curl_init($this->baseUrl.$url);
-        $post_token = json_encode($post_token);
 
-        $username = config("bkash.bkash_username$account");
-        $password = config("bkash.bkash_password$account");
+        $response = Cache::remember('grant_token', now()->addMinutes(55), function () use ($account, $refresh_token, $url) {
 
-        $header = array(
-            'Content-Type:application/json',
-            "password:$password",
-            "username:$username"
-        );
-        curl_setopt($url,CURLOPT_HTTPHEADER, $header);
-        curl_setopt($url,CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($url,CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($url,CURLOPT_POSTFIELDS, $post_token);
-        curl_setopt($url,CURLOPT_FOLLOWLOCATION, 1);
-        curl_setopt($url, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+            
 
-        $resultdata = curl_exec($url);
-        curl_close($url);
+            $post_token = array(
+                'app_key' => config("bkash.bkash_app_key$account"),
+                'app_secret' => config("bkash.bkash_app_secret$account"),
+                'refresh_token' => $refresh_token,
+            );
+            $url = curl_init($this->baseUrl.$url);
+            $post_token = json_encode($post_token);
 
-        $response = json_decode($resultdata, true);
+            $username = config("bkash.bkash_username$account");
+            $password = config("bkash.bkash_password$account");
+
+            $header = array(
+                'Content-Type:application/json',
+                "password:$password",
+                "username:$username"
+            );
+            curl_setopt($url,CURLOPT_HTTPHEADER, $header);
+            curl_setopt($url,CURLOPT_CUSTOMREQUEST, "POST");
+            curl_setopt($url,CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($url,CURLOPT_POSTFIELDS, $post_token);
+            curl_setopt($url,CURLOPT_FOLLOWLOCATION, 1);
+            curl_setopt($url, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+
+            $resultdata = curl_exec($url);
+            curl_close($url);
+
+            return json_decode($resultdata, true);
+            
+        });
+
+        
         if (array_key_exists('msg', $response)) {
             return $response;
         }
@@ -53,6 +64,7 @@ trait Helpers
             session()->put('bkash_token_type', $response['token_type']);
             session()->put('bkash_refresh_token', $response['refresh_token']);
         }
+
         return $response;
     }
 
@@ -76,6 +88,7 @@ trait Helpers
         curl_setopt($url, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
         $resultdata = curl_exec($url);
         curl_close($url);
+
         return json_decode($resultdata, true);
     }
 
@@ -125,6 +138,7 @@ trait Helpers
 
     protected function getToken($account=null)
     {
-        return $this->getUrlToken('/checkout/token/grant',null, $account);
+        return $this->getUrlToken('/checkout/token/grant', null, $account);
+        
     }
 }
