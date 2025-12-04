@@ -15,6 +15,17 @@ trait Helpers
 
     protected function getUrlToken($url,$refresh_token=null, $account=null)
     {
+		// if bkash token exists and not expired, return it, no need to call the bkash api again
+		if(session()->has(['bkash_token','expires_in'])){
+			$expires_in = session()->get('expires_in');
+			if($expires_in && time() < ($expires_in - 200) && !$refresh_token){
+				return [
+					'id_token' => session()->get('bkash_token'),
+					'token_type' => session()->get('bkash_token_type'),
+					'refresh_token' => session()->get('bkash_refresh_token'),
+				];
+			}
+		}
         session()->forget('bkash_token');
         session()->forget('bkash_token_type');
         session()->forget('bkash_refresh_token');
@@ -49,6 +60,9 @@ trait Helpers
             return $response;
         }
         if (isset($response['id_token']) && isset($response['token_type']) && isset($response['refresh_token'])){
+			if(isset($response['expires_in'])) {
+            	session()->put('expires_in', $response['expires_in']);
+			}
             session()->put('bkash_token', $response['id_token']);
             session()->put('bkash_token_type', $response['token_type']);
             session()->put('bkash_refresh_token', $response['refresh_token']);
